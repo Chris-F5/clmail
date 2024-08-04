@@ -3,6 +3,7 @@ clmail : {C Lanugage,Chris Lang's,Command Line} Mail
 
 SMTP Client
 ^^^^^^^^^^^
+
 'clsmtp <hostname> <port>' will initiate an SSL encrypted TCP connection to the
 SMTP server at <hostname>:<port>.  It will proceed to read newline separated
 SMTP client commands (as defined by [RFC 5321]) from standard input and
@@ -13,6 +14,7 @@ next command in stdandard input. If the reply code is of the form 3yz (positive
 intermediate) then subsequent lines of standard input are sent immediatly
 until the special line containing only a dot '.' is encountered. If the reply
 code is not either of the two above forms, then the program exits in failure.
+
 
 IMAP Client
 ^^^^^^^^^^^
@@ -33,6 +35,53 @@ When climap receives untagged server responses, it populates the directory
 structure DIR with files containing the read data. The <script> process may
 read this directory structure and the files enclosed to produce output and
 choose what commands to send next.
+
+
+BUILDING
+^^^^^^^^
+
+    gcc -lssl -lcrypto -oclsmtp clsmtp.c
+
+
+EXAMPLE USAGE
+^^^^^^^^^^^^^
+
+    cat > test_mail << EOF
+    EHLO localhost
+    AUTH PLAIN $(printf '\0yourname@gmail.com\0googleapppassword' | base64)
+    MAIL FROM:<yourname@server.com>
+    RCPT TO:<yourname@server.com>
+    DATA
+    Hello world.
+    This is a test message.
+    .
+    QUIT
+    EOF
+    clsmtp smtp.gmail.com 465 < test_mail
+
+
+MANUAL SMTP/IMAP
+^^^^^^^^^^^^^^^^
+
+Connecting with ncat:
+
+    nc -C --ssl smtp.gmail.com 465
+    nc -C --ssl imap.gmail.com 993
+
+Example imap client commands:
+
+    1 login user@gmail.com password
+    2 list "" "*"
+    3 select INBOX
+    4 status INBOX (MESSAGES)
+    5 fetch 1:3 (BODY)
+    6 fetch 1 (BODY[HEADER])
+    7 fetch 1 (BODY[1])
+    8 logout
+
+
+REFERENCES
+^^^^^^^^^^
 
 [RFC 5321] (SMTP) https://datatracker.ietf.org/doc/html/rfc5321
 [RFC 9051] (IMAP) https://datatracker.ietf.org/doc/html/rfc9051
