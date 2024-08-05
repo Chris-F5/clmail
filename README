@@ -40,7 +40,8 @@ choose what commands to send next.
 BUILDING
 ^^^^^^^^
 
-    gcc -lssl -lcrypto -oclsmtp clsmtp.c
+    gcc -c ssltcp.c clsmtp.c
+    gcc -lssl -lcrypto -oclsmtp ssltcp.o clsmtp.o
 
 
 EXAMPLE USAGE
