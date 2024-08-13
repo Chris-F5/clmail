@@ -38,7 +38,8 @@ init_ssl(void)
 static void
 end_ssl(void)
 {
-  SSL_CTX_free(ssl_ctx);
+  if (ssl_ctx)
+    SSL_CTX_free(ssl_ctx);
   ssl_ctx = NULL;
 }
 
